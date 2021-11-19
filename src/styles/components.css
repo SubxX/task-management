@@ -68,8 +68,3 @@
 .todo-progress span {
   @apply absolute bg-deep-gray top-0 left-0 h-full rounded-3xl;
 }
-
-/* INPUT STYLING */
-.custom-input {
-  @apply w-full px-4 py-2 border-gray-300 rounded-full border focus:ring-2 ring-offset-1 focus:outline-none;
-}

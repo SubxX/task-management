@@ -4,6 +4,9 @@ import User from "./interfaces/user.interface";
 const initialState: User = {
     name: '',
     email: '',
+    profilepic: '',
+    designation: '',
+    authenticated: false
 }
 
 const authSlice = createSlice({
@@ -11,6 +14,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action: PayloadAction<User>) => action.payload,
+        removeUser: (state) => initialState,
     },
 });
 

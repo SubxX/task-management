@@ -3,4 +3,5 @@ export default interface User {
     email: string;
     profilepic?: string;
     designation?: string;
+    authenticated: boolean
 }
