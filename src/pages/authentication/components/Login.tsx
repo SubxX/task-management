@@ -37,7 +37,7 @@ const Login = () => {
     } else {
       localStorage.setItem("taskm_user", JSON.stringify(response));
       dispatch(authActions.setUser({ ...response, authenticated: true }));
-      history.push("/");
+      history.push("/app");
     }
     console.log(response);
   }

@@ -8,7 +8,7 @@ interface Props {
 
 const Avatar = ({ image, icon, type, className, text }: Props) => {
   return (
-    <div className={`avatar ${type} ${className}`}>
+    <div className={`avatar ${type} ${className ? className : ""}`}>
       {image && <img src={image} alt="" />}
       {icon && icon}
       {text && <span>{text}</span>}

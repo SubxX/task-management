@@ -1,5 +1,6 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, getDocs, setDoc, doc, getDoc } from 'firebase/firestore/lite';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { setDoc, doc, getDoc } from 'firebase/firestore/lite';
+// collection, query, where, getDocs, 
 // import { ref, set } from "firebase/database";
 import { db } from "../../../firebase/firebase";
 import { auth } from "../../../firebase/firebase";
@@ -46,6 +47,16 @@ export const loginUser = async (payload: any) => {
         const docRef = doc(db, "users", uid);
         const docSnap = await getDoc(docRef);
         return docSnap.data();
+    } catch (error: any) {
+        return error.code;
+    }
+}
+
+export async function logoutUser(): Promise<string> {
+    try {
+        await signOut(auth)
+        localStorage.removeItem('taskm_user');
+        return 'success'
     } catch (error: any) {
         return error.code;
     }
