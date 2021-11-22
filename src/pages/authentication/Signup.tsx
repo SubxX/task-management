@@ -1,71 +1,71 @@
 import { useState } from "react";
-import { useAppDispatch } from "../../../redux/store/app.store";
-import { authActions } from "../auth.slice";
 import { Link } from "react-router-dom";
-import AlertWrapper from "../../../components/AlertWrapper";
+import { registerUser } from "../../db/api/authentication.api";
+import AlertWrapper from "../../components/ui/AlertWrapper";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
-import { loginUser } from "../api/authentication.api";
 import { useHistory } from "react-router";
 
-const mailPattern = new RegExp(
-  "[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}",
-  "i"
-);
-
-const Login = () => {
-  const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState("");
-  const history = useHistory();
-
+const Signup = () => {
   const {
     handleSubmit,
     formState: { errors },
     control,
   } = useForm();
+  const [notification, setNotification] = useState("");
+  const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
-  async function login(payload: any) {
-    console.log(payload);
+  async function signUp(payload: any) {
     setLoading(true);
-    const response = await loginUser(payload);
+    const response = await registerUser(payload);
     setLoading(false);
-    if (response === "auth/user-not-found") {
-      setNotification("doesnot_exists");
-    } else {
-      localStorage.setItem("taskm_user", JSON.stringify(response));
-      dispatch(authActions.setUser({ ...response, authenticated: true }));
-      history.push("/app");
+    if (response === "signup/success") {
+      history.push("/login");
+    } else if (response === "auth/email-already-in-use") {
+      setNotification("exist");
     }
-    console.log(response);
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full p-5 " style={{ maxWidth: "280px" }}>
-        <p className="text-3xl font-bold uppercase">Login</p>
+        <p className="text-3xl font-bold uppercase">Signup</p>
 
         <AlertWrapper
           type="warning"
-          isOpened={notification === "doesnot_exists"}
+          isOpened={notification === "exist"}
           closeAlert={() => setNotification("")}
         >
-          Email doesnot exists
+          Email already exists
         </AlertWrapper>
 
-        <form className="mt-5 space-y-3" onSubmit={handleSubmit(login)}>
+        <form className="mt-5 space-y-3" onSubmit={handleSubmit(signUp)}>
+          <Controller
+            name="name"
+            control={control}
+            rules={{ required: "Field is required" }}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                name="name"
+                error={Boolean(errors.name)}
+                helperText={errors.name?.message}
+                onChange={onChange}
+                value={value || ""}
+                label="Name"
+                variant="filled"
+                size="small"
+                className="w-full"
+              />
+            )}
+          />
+
           <Controller
             name="email"
             control={control}
-            rules={{
-              required: "Field is required",
-              pattern: {
-                value: mailPattern,
-                message: "Enter a valid email",
-              },
-            }}
+            rules={{ required: "Field is required" }}
             render={({ field: { onChange, value } }) => (
               <TextField
                 name="email"
@@ -82,9 +82,31 @@ const Login = () => {
           />
 
           <Controller
-            name="password"
+            name="designation"
             control={control}
             rules={{ required: "Field is required" }}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                name="designation"
+                error={Boolean(errors.designation)}
+                helperText={errors.designation?.message}
+                onChange={onChange}
+                value={value || ""}
+                label="Designation"
+                variant="filled"
+                size="small"
+                className="w-full"
+              />
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            rules={{
+              required: "Field is required",
+              minLength: { value: 6, message: "Password is week" },
+            }}
             render={({ field: { onChange, value } }) => (
               <TextField
                 type="password"
@@ -110,18 +132,18 @@ const Login = () => {
             {loading ? (
               <CircularProgress style={{ width: "24px", height: "24px" }} />
             ) : (
-              "Login"
+              "Signup"
             )}
           </Button>
         </form>
 
         <span className="text-center text-sm mt-2 block">
-          dont have an account ?{" "}
+          already have a account ?{" "}
           <Link
-            to="/signup"
+            to="/login"
             className="text-deep-purple cursor-pointer underline"
           >
-            signup
+            login
           </Link>
         </span>
       </div>
@@ -129,4 +151,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

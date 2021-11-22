@@ -1,14 +1,30 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 import UserInfo from "./UserInfo";
 import DefaultListItem from "./DefaultListItem";
 import { FcHome, FcCalendar, FcTodoList } from "react-icons/fc";
-import Devider from "../Devider";
+import Devider from "../ui/Devider";
 import AddedListItem from "./AddedListItem";
 import { useLocation } from "react-router";
 import AddListDialog from "./AddListDialog";
+import { getUserLists } from "../../db/api/todolist.api";
+import { RootState } from "../../redux/store/app.store";
+import { useSelector } from "react-redux";
 
 const Sidebar = forwardRef<HTMLDivElement, any>((props, ref) => {
   const location = useLocation();
+  const userId: string = useSelector((state: RootState) => state.auth.uid);
+  useEffect(() => {
+    // fetchUserLists();
+  }, []);
+
+  async function fetchUserLists() {
+    try {
+      const lists = await getUserLists(userId);
+      console.log(lists);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <aside

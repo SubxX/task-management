@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { authActions } from "../../pages/authentication/auth.slice";
+import { authActions } from "../../redux/reducers/auth.slice";
 
 const useAuth = () => {
     const dispatch = useDispatch();

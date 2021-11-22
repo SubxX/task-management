@@ -7,6 +7,9 @@ const routeGuard = (to: any, from: any, next: any) => {
         }
         next.redirect("/login");
     } else {
+        if (isAuthenticated && to.meta.redirectIfAuth) {
+            next.redirect("/app");
+        }
         next()
     }
 };

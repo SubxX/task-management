@@ -1,13 +1,13 @@
-import Avatar from "../Avatar";
+import Avatar from "../ui/Avatar";
 import { BiLogOutCircle } from "react-icons/bi";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useAppDispatch } from "../../redux/store/app.store";
-import { authActions } from "../../pages/authentication/auth.slice";
-import { logoutUser } from "../../pages/authentication/api/authentication.api";
+import { authActions } from "../../redux/reducers/auth.slice";
+import { logoutUser } from "../../db/api/authentication.api";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import ConfirmationDialog from "../ConfirmationDialog";
+import ConfirmationDialog from "../ui/ConfirmationDialog";
 import { createDelay } from "../../utils/helper.utils";
 
 interface Props {
@@ -25,7 +25,7 @@ const UserInfo = ({ userimg, name, designation }: Props) => {
   async function logoutHandler(): Promise<any> {
     setLoading(true);
     const response = await logoutUser();
-    await createDelay(4000);
+    await createDelay(2000);
     setLoading(false);
     setOpen(false);
     if (response === "success") {

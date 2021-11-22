@@ -1,5 +1,5 @@
-import Header from "../../../components/Header";
-import Devider from "../../../components/Devider";
+import Header from "../../../components/ui/Header";
+import Devider from "../../../components/ui/Devider";
 import Todo from "./Todo";
 
 const TodoList = () => {

@@ -23,7 +23,7 @@ const ConfirmationDialog = ({
   confirmAction,
   loading,
 }: Props) => {
-  function handleClosePopup(event: any, reason: string) {
+  function handleClosePopup() {
     if (loading) return;
     closePopup();
   }
