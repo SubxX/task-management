@@ -8,19 +8,24 @@ import { useLocation } from "react-router";
 import AddListDialog from "./AddListDialog";
 import { getUserLists } from "../../db/api/todolist.api";
 import { RootState } from "../../redux/store/app.store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { listActions } from "../../redux/reducers/list.slice";
+import List from "../../db/interfaces/list.interface";
 
 const Sidebar = forwardRef<HTMLDivElement, any>((props, ref) => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const userId: string = useSelector((state: RootState) => state.auth.uid);
+  const lists: List[] = useSelector((state: RootState) => state.list);
+
   useEffect(() => {
-    // fetchUserLists();
+    fetchUserAddedLists();
   }, []);
 
-  async function fetchUserLists() {
+  async function fetchUserAddedLists() {
     try {
       const lists = await getUserLists(userId);
-      console.log(lists);
+      dispatch(listActions.initList(lists));
     } catch (error) {
       console.error(error);
     }
@@ -64,26 +69,14 @@ const Sidebar = forwardRef<HTMLDivElement, any>((props, ref) => {
           <Devider classname="m-5" />
 
           <div className="added-items">
-            <AddedListItem
-              text="Directory"
-              to="/app/directory"
-              active={location.pathname === "/app/directory"}
-            />
-            <AddedListItem
-              text="Onboarding"
-              to="/app/onboarding"
-              active={location.pathname === "/app/onboarding"}
-            />
-            <AddedListItem
-              text="Offboarding"
-              to="/app/offboarding"
-              active={location.pathname === "/app/offboarding"}
-            />
-            <AddedListItem
-              text="Time-off"
-              to="/app/time-off"
-              active={location.pathname === "/app/time-off"}
-            />
+            {lists.map((list: List) => (
+              <AddedListItem
+                key={list.uid}
+                text={list.name}
+                to={`/app/${list.uid}`}
+                active={location.pathname === `/app/${list.uid}`}
+              />
+            ))}
           </div>
         </div>
         <AddListDialog />

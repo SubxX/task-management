@@ -9,7 +9,7 @@ export const createList = async (uid: string, listname: any): Promise<List> => {
         const payload = {
             createdBy: uid,
             name: listname,
-            createdAt: new Date().toUTCString()
+            createdAt: new Date().getTime()
         }
         const createdList = await addDoc(listCollectionRef, payload);
         return { ...payload, uid: createdList.id };
@@ -20,13 +20,14 @@ export const createList = async (uid: string, listname: any): Promise<List> => {
 
 export const getUserLists = async (uid: string): Promise<List[]> => {
     try {
+        // orderBy("createdAt")
         const listsQuery = await query(listCollectionRef, where("createdBy", "==", uid));
         const querySnapshot = await getDocs(listsQuery);
         const lists: any[] = []
         querySnapshot.forEach((doc) => {
             lists.push({ uid: doc.id, ...doc.data() })
         });
-        return lists;
+        return lists.sort((a, b) => a.createdAt < b.createdAt ? -1 : 1)
     } catch (error: any) {
         throw error.code;
     }

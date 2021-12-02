@@ -11,11 +11,14 @@ import ButtonPill from "../ui/ButtonPill";
 import CircularProgress from "@mui/material/CircularProgress";
 import { createList } from "../../db/api/todolist.api";
 import store from "../../redux/store/app.store";
+import { listActions } from "../../redux/reducers/list.slice";
+import { useDispatch } from "react-redux";
 
 export default function AddListDialog() {
   const [open, setOpen] = useState(false);
   const [listName, setListName] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -23,15 +26,18 @@ export default function AddListDialog() {
 
   const handleClose = () => {
     if (loading) return;
+    setListName("");
     setOpen(false);
   };
 
   async function createTodoList() {
     setLoading(true);
     const uid = store.getState().auth.uid;
-    const response = await createList(uid, listName);
-    setLoading(false);
-    console.log(response);
+    createList(uid, listName).then((response) => {
+      dispatch(listActions.addList(response));
+      setLoading(false);
+      handleClose();
+    });
   }
 
   return (

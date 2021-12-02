@@ -8,8 +8,11 @@ const listSlice = createSlice({
     initialState,
     reducers: {
         initList: (state, action: PayloadAction<List[]>) => action.payload,
+        addList: (state, action: PayloadAction<List>) => {
+            state.push(action.payload)
+        }
     },
 });
 
-export const authActions = listSlice.actions;
+export const listActions = listSlice.actions;
 export default listSlice.reducer;
