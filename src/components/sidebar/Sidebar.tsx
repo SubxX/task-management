@@ -1,4 +1,4 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef, useEffect, useState, useRef } from "react";
 import UserInfo from "./UserInfo";
 import DefaultListItem from "./DefaultListItem";
 import { FcHome, FcCalendar, FcTodoList } from "react-icons/fc";
@@ -11,24 +11,46 @@ import { RootState } from "../../redux/store/app.store";
 import { useSelector, useDispatch } from "react-redux";
 import { listActions } from "../../redux/reducers/list.slice";
 import List from "../../db/interfaces/list.interface";
+import ConfirmationDialog from "../ui/ConfirmationDialog";
 
 const Sidebar = forwardRef<HTMLDivElement, any>((props, ref) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const userId: string = useSelector((state: RootState) => state.auth.uid);
   const lists: List[] = useSelector((state: RootState) => state.list);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const deletableListId = useRef<string>("");
 
   useEffect(() => {
     fetchUserAddedLists();
   }, []);
 
-  async function fetchUserAddedLists() {
-    try {
-      const lists = await getUserLists(userId);
-      dispatch(listActions.initList(lists));
-    } catch (error) {
-      console.error(error);
-    }
+  function fetchUserAddedLists() {
+    getUserLists(userId)
+      .then((lists) => dispatch(listActions.initList(lists)))
+      .catch((err) => console.log(err));
+  }
+
+  // Delete a list
+
+  function deleteListHandler(id: string): void {
+    setOpen(true);
+    deletableListId.current = id;
+  }
+
+  function closeDeleteListHandler(): void {
+    deletableListId.current = "";
+    setOpen(false);
+  }
+
+  function deleteList(): void {
+    if (!deletableListId.current) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      console.log(deletableListId.current);
+    }, 2000);
   }
 
   return (
@@ -73,13 +95,22 @@ const Sidebar = forwardRef<HTMLDivElement, any>((props, ref) => {
               <AddedListItem
                 key={list.uid}
                 text={list.name}
-                to={`/app/${list.uid}`}
+                id={list.uid}
                 active={location.pathname === `/app/${list.uid}`}
+                deleteList={deleteListHandler}
               />
             ))}
           </div>
         </div>
         <AddListDialog />
+        <ConfirmationDialog
+          title="Are you sure ?"
+          subtitle="you are about to delete this list"
+          opened={open}
+          closePopup={closeDeleteListHandler}
+          confirmAction={deleteList}
+          loading={loading}
+        />
       </div>
     </aside>
   );

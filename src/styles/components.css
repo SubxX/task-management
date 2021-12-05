@@ -50,6 +50,9 @@
 .added-list.active::after {
   @apply w-1;
 }
+.added-list button {
+  @apply absolute top-2/4 transform -translate-y-2/4 right-2;
+}
 .added-list:hover div,
 .added-list.active div {
   @apply bg-deep-purple;
@@ -57,6 +60,14 @@
 .added-list:hover,
 .added-list.active {
   @apply text-black;
+}
+@media (hover: hover) {
+  .added-list button {
+    display: none;
+  }
+  .added-list:hover button {
+    display: block;
+  }
 }
 
 .notification-chip {
