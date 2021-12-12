@@ -9,7 +9,7 @@ const Home = () => {
       <SidebarWrapper />
       <Switch>
         <Route path="/app" exact component={TodoHome} />
-        <Route path="/app/:todoid" component={TodoList} />
+        <Route path="/app/:listid" component={TodoList} />
       </Switch>
     </div>
   );

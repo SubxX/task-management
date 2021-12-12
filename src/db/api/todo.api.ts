@@ -1,10 +1,21 @@
 import { db } from "../firebase";
-import { addDoc, collection, query, getDocs, deleteDoc, doc } from 'firebase/firestore/lite';
+import { addDoc, collection, query, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore/lite';
 import Todo from "../interfaces/todo.interface";
 
 const listDb = "todolist";
 const todoDb = "todos";
 // TodoDB is a sub collection to listDB
+
+export const getListInfo = async (listId: string): Promise<any> => {
+    try {
+        const docRef = doc(db, listDb, listId);
+        const docSnap = await getDoc(docRef);
+        const data = docSnap.data();
+        return data
+    } catch (error: any) {
+        throw error;
+    }
+}
 
 export const getListTodos = async (listId: string): Promise<Todo[]> => {
     try {
@@ -24,7 +35,7 @@ export const getListTodos = async (listId: string): Promise<Todo[]> => {
 
 export const createTodo = async (listId: string, todo: string): Promise<Todo> => {
     try {
-        const listTodoCollection = collection(db, listDb, listId, 'todos')
+        const listTodoCollection = collection(db, listDb, listId, todoDb)
         const payload = {
             todo,
             completed: false,
