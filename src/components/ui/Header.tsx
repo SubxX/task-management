@@ -4,7 +4,7 @@ import { RiSearch2Line } from "react-icons/ri";
 import { BsPlus } from "react-icons/bs";
 import AddTodoDialog from "./AddTodoDialog";
 interface Props {
-  listid: string;
+  listid?: string;
   name: string;
   total: number;
   completed: number;
@@ -27,11 +27,13 @@ const Header = ({ listid, name, total, completed }: Props) => {
         </div>
         <div className="flex items-center flex-wrap">
           <ButtonIcon icon={<RiSearch2Line size={20} />} theme="secondary" />
-          <ButtonIcon
-            onClick={handleAddTodoOpen}
-            icon={<BsPlus size={24} />}
-            className="ml-2"
-          />
+          {Boolean(listid) && (
+            <ButtonIcon
+              onClick={handleAddTodoOpen}
+              icon={<BsPlus size={24} />}
+              className="ml-2"
+            />
+          )}
         </div>
       </div>
       <AddTodoDialog open={open} setOpen={setOpen} listid={listid} />

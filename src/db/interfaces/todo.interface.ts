@@ -4,4 +4,5 @@ export default interface Todo {
     completed: boolean;
     important: boolean;
     createdAt: number;
+    list: string
 }

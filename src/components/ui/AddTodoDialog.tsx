@@ -7,14 +7,16 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import ButtonPill from "./ButtonPill";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createTodo } from "../../db/api/todo.api";
 import { selectedListActions } from "../../redux/reducers/selectedlist.slice";
+import { RootState } from "../../redux/store/app.store";
 
 const AddTodoDialog = ({ open, setOpen, listid }: any) => {
   const [todo, setTodo] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.auth.uid);
 
   const handleClose = () => {
     if (loading) return;
@@ -24,7 +26,7 @@ const AddTodoDialog = ({ open, setOpen, listid }: any) => {
 
   async function createTodoList() {
     setLoading(true);
-    createTodo(listid, todo)
+    createTodo(listid, { todo, createdBy: userId })
       .then((result) => {
         dispatch(selectedListActions.addTodo(result));
         setTodo("");

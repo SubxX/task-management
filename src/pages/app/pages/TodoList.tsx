@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Header from "../../../components/ui/Header";
 import Devider from "../../../components/ui/Devider";
-import Todo from "./Todo";
+import Todo from "../components/Todo";
 import { useParams } from "react-router";
-import { getListTodos, getListInfo } from "../../../db/api/todo.api";
 import TodoI from "../../../db/interfaces/todo.interface";
 import CircularProgress from "@mui/material/CircularProgress";
 import { selectedListActions } from "../../../redux/reducers/selectedlist.slice";
@@ -12,30 +11,26 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store/app.store";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { fetchTodosByListThunk } from "../../../redux/async-actions/todo-actions";
+import { sortTodos } from "../utils/app.utils";
 
 const TodoList = () => {
   const { listid }: any = useParams();
-  const [loading, setLoading] = useState(true);
-  const { todos, completed, name, incomplete } = useSelector(
+  const dispatch = useAppDispatch();
+  const { todos, name, isLoading } = useSelector(
     (state: RootState) => state.selectedList
   );
-  const dispatch = useAppDispatch();
+  const [completed, incomplete] = useMemo(() => sortTodos(todos), [todos]);
 
   useEffect(() => {
-    Promise.all([getListInfo(listid), getListTodos(listid)])
-      .then((data) => {
-        const [{ name }, todos] = data;
-        dispatch(selectedListActions.initData({ name, todos }));
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+    dispatch(fetchTodosByListThunk(listid));
   }, []);
 
   function todoStatehandler(todoid: string, type = "complete") {
     dispatch(selectedListActions.completeTodo({ todoid }));
   }
 
-  if (loading)
+  if (isLoading)
     return (
       <div className="min-h-screen grid place-items-center w-full">
         <CircularProgress />

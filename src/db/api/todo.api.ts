@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { addDoc, collection, query, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore/lite';
+import { addDoc, collection, query, getDocs, deleteDoc, doc, getDoc, collectionGroup, where, updateDoc } from 'firebase/firestore/lite';
 import Todo from "../interfaces/todo.interface";
 
 const listDb = "todolist";
@@ -33,14 +33,19 @@ export const getListTodos = async (listId: string): Promise<Todo[]> => {
     }
 }
 
-export const createTodo = async (listId: string, todo: string): Promise<Todo> => {
+type CreateTodoPayload = {
+    todo: string;
+    createdBy: string
+}
+export const createTodo = async (listId: string, tdPayload: CreateTodoPayload): Promise<Todo> => {
     try {
         const listTodoCollection = collection(db, listDb, listId, todoDb)
         const payload = {
-            todo,
             completed: false,
             important: false,
-            createdAt: new Date().getTime()
+            createdAt: new Date().getTime(),
+            list: listId,
+            ...tdPayload
         }
         const docRef = await addDoc(listTodoCollection, payload)
         return { ...payload, uid: docRef.id }
@@ -55,4 +60,24 @@ export const deleteTodo = async (listId: string, todoId: string) => {
     } catch (error: any) {
         throw error;
     }
+}
+
+export const getImportantTodos = async (user_id: string): Promise<Todo[]> => {
+    const todosQuery = query(collectionGroup(db, 'todos'), where("createdBy", '==', user_id), where('important', '==', true));
+    const querySnapshot = await getDocs(todosQuery);
+    const todos = querySnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as Todo));
+    return todos
+}
+
+export type ToggleTodoImportancePayload = {
+    listId: string
+    todoId: string
+    value: boolean
+}
+export const toggleTodoImportance = async (payload: ToggleTodoImportancePayload): Promise<boolean> => {
+    const { listId, todoId, value } = payload
+    const todoListRef = collection(db, listDb, listId, 'todos')
+    const docRef = doc(todoListRef, todoId)
+    await updateDoc(docRef, { important: value })
+    return true
 }

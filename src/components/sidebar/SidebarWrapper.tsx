@@ -13,7 +13,7 @@ const SidebarWrapper = () => {
 
   return (
     <>
-      <Sidebar ref={navRef}></Sidebar>
+      <Sidebar ref={navRef} />
       <SidebarMobile togglNavHandler={toggleNav} isOpened={isOpened} />
       <div
         onClick={toggleNav}

@@ -4,3 +4,4 @@ export const createDelay = (duration: number): Promise<boolean> => (
         setTimeout(() => resolve(true), duration)
     })
 )
+export const randomNumber = (min: number, max: number) => Math.floor(Math.random() * (max - min) + min);

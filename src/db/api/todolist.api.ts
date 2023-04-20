@@ -23,10 +23,7 @@ export const getUserLists = async (uid: string): Promise<List[]> => {
     try {
         const listsQuery = await query(listCollectionRef, where("createdBy", "==", uid));
         const querySnapshot = await getDocs(listsQuery);
-        const lists: any[] = []
-        querySnapshot.forEach((doc) => {
-            lists.push({ uid: doc.id, ...doc.data() })
-        });
+        const lists = querySnapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() } as List));
         return lists.sort((a, b) => a.createdAt < b.createdAt ? -1 : 1)
     } catch (error: any) {
         throw error.code;

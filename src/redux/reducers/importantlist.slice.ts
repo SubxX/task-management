@@ -1,28 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Todo from "../../db/interfaces/todo.interface";
 
-interface SelectedListInteraface {
-    name: string;
+interface ImportantListInteraface {
     todos: Todo[];
     isLoading: boolean
     err?: any
 }
 
-const initialState: SelectedListInteraface = {
-    name: '',
+const initialState: ImportantListInteraface = {
     todos: [],
     isLoading: true,
 }
 
-const selectedListSlice = createSlice({
-    name: "todo",
+const importantListSlice = createSlice({
+    name: "todo-important",
     initialState,
     reducers: {
-        initData: (state, action: PayloadAction<Omit<SelectedListInteraface, 'isLoading'>>) => {
+        initData: (state, action: PayloadAction<Omit<ImportantListInteraface, 'isLoading'>>) => {
             return { ...state, ...action.payload, err: null, isLoading: false }
-        },
-        addTodo: (state, action: PayloadAction<Todo>) => {
-            state.todos.push(action.payload)
         },
         completeTodo: (state, action: PayloadAction<{ todoid: string }>) => {
             state.todos.map(td => td.uid === action.payload.todoid ? td.completed = !td.completed : td)
@@ -39,6 +34,6 @@ const selectedListSlice = createSlice({
     }
 });
 
-export const selectedListActions = selectedListSlice.actions;
-export default selectedListSlice.reducer;
+export const importantListActions = importantListSlice.actions;
+export default importantListSlice.reducer;
 
